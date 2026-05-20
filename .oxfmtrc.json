@@ -20,6 +20,7 @@
     "node_modules/",
     "coverage/",
     "github-script/README.md",
-    "**/*.yml"
+    "**/*.yml",
+    "**/*.yaml"
   ]
 }
