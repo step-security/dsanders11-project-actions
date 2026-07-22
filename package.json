@@ -54,7 +54,7 @@
     "@octokit/plugin-paginate-graphql": "^6.0.0",
     "@octokit/plugin-request-log": "^6.0.0",
     "@octokit/plugin-retry": "^8.1.0",
-    "axios": "^1.16.0",
+    "axios": "^1.18.0",
     "mustache": "^4.2.0"
   },
   "devDependencies": {
