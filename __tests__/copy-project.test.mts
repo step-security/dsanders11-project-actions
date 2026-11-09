@@ -16,6 +16,7 @@ import { mockGetBooleanInput, mockGetInput } from './utils.js';
 
 vi.mock('@actions/core');
 vi.mock('../src/lib');
+vi.mock('../src/subscription');
 
 const { ProjectNotFoundError } =
   await vi.importActual<typeof import('../src/lib.js')>('../src/lib');
@@ -293,6 +294,7 @@ describe('copyProjectAction', () => {
     ]);
 
     const action = index.copyProjectAction();
+    await Promise.resolve(); // yield one microtask to let validateSubscription() complete
     expect(copyProject).toHaveBeenCalledWith(
       owner,
       projectNumber,

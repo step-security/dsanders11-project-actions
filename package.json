@@ -1,5 +1,5 @@
 {
-  "name": "@step-security/project-actions",
+  "name": "project-actions",
   "description": "A collection of actions for automating GitHub projects",
   "version": "2.0.1",
   "author": "step-security",
