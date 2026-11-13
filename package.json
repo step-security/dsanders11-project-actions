@@ -1,7 +1,7 @@
 {
   "name": "project-actions",
   "description": "A collection of actions for automating GitHub projects",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "author": "step-security",
   "publisher": "step-security",
   "private": true,
