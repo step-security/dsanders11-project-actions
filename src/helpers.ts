@@ -1,3 +1,5 @@
+import * as crypto from 'node:crypto';
+import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import * as core from '@actions/core';
@@ -8,8 +10,31 @@ import { Octokit } from '@octokit/core';
 import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
 
 const GH_CLI_RELEASES = 'https://github.com/cli/cli/releases/';
-const GH_VERSION = '2.88.1';
+const GH_VERSION = '2.103.3';
 const GH_DEB_FILENAME = `gh_${GH_VERSION}_linux_amd64.tar.gz`;
+const GH_CHECKSUMS_FILENAME = `gh_${GH_VERSION}_checksums.txt`;
+
+async function fetchExpectedChecksum(): Promise<string | null> {
+  try {
+    const checksumsPath = await tc.downloadTool(
+      `${GH_CLI_RELEASES}/download/v${GH_VERSION}/${GH_CHECKSUMS_FILENAME}`
+    );
+    const contents = fs.readFileSync(checksumsPath, 'utf8');
+    const line = contents.split('\n').find(l => l.endsWith(GH_DEB_FILENAME));
+    if (!line) {
+      core.warning(
+        `Checksum entry not found for ${GH_DEB_FILENAME} — skipping verification`
+      );
+      return null;
+    }
+    return line.split(/\s+/)[0];
+  } catch {
+    core.warning(
+      `Failed to fetch checksums file for gh v${GH_VERSION} — skipping verification`
+    );
+    return null;
+  }
+}
 
 export async function installGhCli(): Promise<string> {
   if (process.platform !== 'linux') {
@@ -20,9 +45,23 @@ export async function installGhCli(): Promise<string> {
 
   // Download and cache if not already cached
   if (!toolPath) {
-    const downloadPath = await tc.downloadTool(
-      `${GH_CLI_RELEASES}/download/v${GH_VERSION}/${GH_DEB_FILENAME}`
-    );
+    const [downloadPath, expectedChecksum] = await Promise.all([
+      tc.downloadTool(
+        `${GH_CLI_RELEASES}/download/v${GH_VERSION}/${GH_DEB_FILENAME}`
+      ),
+      fetchExpectedChecksum()
+    ]);
+    if (expectedChecksum) {
+      const hash = crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(downloadPath))
+        .digest('hex');
+      if (hash !== expectedChecksum) {
+        core.warning(
+          `Checksum mismatch for ${GH_DEB_FILENAME}: expected ${expectedChecksum}, got ${hash}`
+        );
+      }
+    }
     const extractedPath = await tc.extractTar(downloadPath, undefined, [
       'xz',
       '--strip',
