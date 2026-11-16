@@ -1,0 +1,17 @@
+{
+  "$comment": "Managed automatically when syncing with upstream. Do not edit by hand.",
+  "schema_version": 1,
+  "onboarding_type": "copied",
+  "action_type": "node",
+  "upstream": {
+    "repository": "dsanders11/project-actions",
+    "synced_tag": "v2.1.0",
+    "synced_commit": "d5490cb5784c8570b072fbf02f974fd5ee3e145f",
+    "archived": false
+  },
+  "build": {
+    "package_manager": "npm@11.12.1",
+    "node_version": "24",
+    "script": "bundle"
+  }
+}

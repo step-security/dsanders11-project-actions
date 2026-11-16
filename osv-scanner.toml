@@ -1,0 +1,3 @@
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+reason = "No fix available upstream; only affects github-script action where glob patterns are fully caller-controlled"
